@@ -127,6 +127,8 @@ public class ServiceHelper {
                 // //
                 + "$IPTABLES -L OUTPUT | $GREP -q freeYouTube ||  $IPTABLES -A OUTPUT -s 173.194.52.0/22 -j freeYouTube || exit 11\n" //
                 + "# Flush existing rules\n" //
+                + "$IPTABLES -A freeYouTube -j REJECT || exit 15\n" //
+                + "# Flush existing rules\n" //
                 + "$IPTABLES -F freeYouTube || exit 17\n" //
                 + "" //
         );
