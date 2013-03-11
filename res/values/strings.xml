@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FreeYouTube</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">"Revenons une fois encore sur les soucis rencontré par les Freenautes sur YouTube : \n
+L'ami Korben venant de publier un tutorial vous permettant de contrer les problèmes en question. \n
+Cette application vous évite de mettre les mains dans le cambouis, en bloquant l'accès à une plage IP bien précise (de 173.194.52.0 à 173.194.55.255) en ajoutant une règle dans le Firewall interne (iptables).
+
+Cette Application nécessite un téléphone ROOTER !!! "</string>
+    <string name="toast_bin_installed">iptables_armv5 et BusyBox : fichiers binaires installés !</string>
+
+</resources>
