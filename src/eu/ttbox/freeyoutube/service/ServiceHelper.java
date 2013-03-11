@@ -119,8 +119,9 @@ public class ServiceHelper {
         script.append("" //
                 + "dmesg -c >/dev/null || exit\n" //
                 + "$IPTABLES --version || exit 1\n" //
-                + "# Create the freeYouTube chains if necessary\n" //
-                + "$IPTABLES -L freeYouTube >/dev/null 2>/dev/null || $IPTABLES -N freeYouTube || exit 3\n" //
+                + "# Create the freeYouTube_DTC chains if necessary\n" //
+                + "$IPTABLES -L freeYouTube_DTC >/dev/null 2>/dev/null || $IPTABLES -N freeYouTube_DTC || exit 3\n" //
+                + "$IPTABLES -A freeYouTube_DTC -j DROP || exit 4\n" //
                 + "# Add freeYouTube chain to OUTPUT chain if necessary\n" //
                 // +
                 // "$IPTABLES -L OUTPUT | $GREP -q freeYouTube || $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube --reject-with tcp-reset || exit 11\n"
@@ -128,13 +129,15 @@ public class ServiceHelper {
                 // +
                 // "$IPTABLES -A OUTPUT -d 173.194.52.0/22 -j freeYouTube || exit 11\n"
                 // //
-               
-                + "$IPTABLES -L OUTPUT | $GREP -q freeYouTube ||  $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube || exit 11\n" //
-                + "# Flush existing rules\n" //
-                + "$IPTABLES -A freeYouTube -j REJECT || exit 15\n" //
-//                + "$IPTABLES -P freeYouTube DROP || exit 15\n" //
-                + "# Flush existing rules\n" //
-                + "$IPTABLES -F freeYouTube || exit 17\n" //
+//                + "$IPTABLES -A OUTPUT -p tcp -d 173.194.34.0/22 -j REJECT || exit 15\n" //
+//                + "$IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j REJECT || exit 15\n" //
+               // V new Chain
+                + "$IPTABLES -A OUTPUT -d 173.194.52.0/22 -j freeYouTube_DTC || exit 11\n" //
+//                + "$IPTABLES -A OUTPUT -d 173.194.34.0/22 -j freeYouTube_DTC || exit 11\n" //
+//                + "$IPTABLES -L OUTPUT | $GREP -q freeYouTube_DTC ||  $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube_DTC || exit 11\n" //
+//                 + "$IPTABLES -A freeYouTube -j REJECT || exit 15\n" //
+//                 + "# Flush existing rules\n" //
+//                + "$IPTABLES -F freeYouTube_DTC || exit 17\n" //
                 + "" //
         );
 
