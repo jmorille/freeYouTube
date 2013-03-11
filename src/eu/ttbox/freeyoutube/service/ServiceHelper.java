@@ -117,7 +117,7 @@ public class ServiceHelper {
                 + "dmesg -c >/dev/null || exit\n" //
                 + "$IPTABLES --version || exit 1\n" //
                 + "# Create the freeYouTube chains if necessary\n" //
-                + "$IPTABLES -L freeYouTube >/dev/null 2>/dev/null || $IPTABLES --new freeYouTube || exit 3\n" //
+                + "$IPTABLES -L freeYouTube >/dev/null 2>/dev/null || $IPTABLES -N freeYouTube || exit 3\n" //
                 + "# Add freeYouTube chain to OUTPUT chain if necessary\n" //
                 // +
                 // "$IPTABLES -L OUTPUT | $GREP -q freeYouTube || $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube --reject-with tcp-reset || exit 11\n"
