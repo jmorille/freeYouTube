@@ -103,6 +103,9 @@ public class ServiceHelper {
                 + myiptables + "\n" + "fi\n" + ""; //
     }
 
+    //iptables -A OUTPUT -p tcp -d 173.194.52.0/22 -j REJECT --reject-with tcp-reset
+    // http://korben.info/free-et-youtube-comment-regler-le-souci-sous-windows-mac-et-linux.html
+    // Working iptables -A OUTPUT -p tcp -d 173.194.52.0/22 -j REJECT 
     public static boolean applyIptablesRules(Context context, boolean showErrors) {
         Log.d(TAG, "*** ********************************************* ***");
         Log.d(TAG, "*** Run Script : BEGIN                            ***");
@@ -125,9 +128,11 @@ public class ServiceHelper {
                 // +
                 // "$IPTABLES -A OUTPUT -d 173.194.52.0/22 -j freeYouTube || exit 11\n"
                 // //
-                + "$IPTABLES -L OUTPUT | $GREP -q freeYouTube ||  $IPTABLES -A OUTPUT -s 173.194.52.0/22 -j freeYouTube || exit 11\n" //
+               
+                + "$IPTABLES -L OUTPUT | $GREP -q freeYouTube ||  $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube || exit 11\n" //
                 + "# Flush existing rules\n" //
                 + "$IPTABLES -A freeYouTube -j REJECT || exit 15\n" //
+//                + "$IPTABLES -P freeYouTube DROP || exit 15\n" //
                 + "# Flush existing rules\n" //
                 + "$IPTABLES -F freeYouTube || exit 17\n" //
                 + "" //
