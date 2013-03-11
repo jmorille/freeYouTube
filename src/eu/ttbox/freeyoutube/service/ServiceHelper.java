@@ -121,7 +121,8 @@ public class ServiceHelper {
                 + "$IPTABLES --version || exit 1\n" //
                 + "# Create the freeYouTube_DTC chains if necessary\n" //
                 + "$IPTABLES -L freeYouTube_DTC >/dev/null 2>/dev/null || $IPTABLES -N freeYouTube_DTC || exit 3\n" //
-                + "$IPTABLES -A freeYouTube_DTC -j DROP || exit 4\n" //
+//                + "$IPTABLES -A freeYouTube_DTC -j DROP || exit 4\n" //
+                + "$IPTABLES -A freeYouTube_DTC -j REJECT || exit 4\n" // --reject-with tcp-reset
                 + "# Add freeYouTube chain to OUTPUT chain if necessary\n" //
                 // +
                 // "$IPTABLES -L OUTPUT | $GREP -q freeYouTube || $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube --reject-with tcp-reset || exit 11\n"
