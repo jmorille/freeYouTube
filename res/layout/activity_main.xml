@@ -15,7 +15,7 @@
         android:text="@string/hello_world" />
 
     <Button
-        android:id="@+id/freeYouTube"
+        android:id="@+id/freeYouTubeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

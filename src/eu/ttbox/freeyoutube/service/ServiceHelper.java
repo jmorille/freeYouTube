@@ -1,6 +1,7 @@
 package eu.ttbox.freeyoutube.service;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,7 +23,7 @@ public class ServiceHelper {
     public static boolean isEnabled(Context ctx) {
         if (ctx == null)
             return false;
-        return ctx.getSharedPreferences(AppConstant.PREFS_NAME, 0).getBoolean(AppConstant.PREF_ENABLED, false);
+        return ctx.getSharedPreferences(AppConstant.PREFS_NAME, Context.MODE_PRIVATE).getBoolean(AppConstant.PREF_ENABLED, false);
     }
 
     /**
@@ -36,7 +37,7 @@ public class ServiceHelper {
     public static void setEnabled(Context ctx, boolean enabled) {
         if (ctx == null)
             return;
-        final SharedPreferences prefs = ctx.getSharedPreferences(AppConstant.PREFS_NAME, 0);
+        final SharedPreferences prefs = ctx.getSharedPreferences(AppConstant.PREFS_NAME, Context.MODE_PRIVATE);
         if (prefs.getBoolean(AppConstant.PREF_ENABLED, false) == enabled) {
             return;
         }
@@ -103,10 +104,15 @@ public class ServiceHelper {
                 + myiptables + "\n" + "fi\n" + ""; //
     }
 
-    //iptables -A OUTPUT -p tcp -d 173.194.52.0/22 -j REJECT --reject-with tcp-reset
+    // iptables -A OUTPUT -p tcp -d 173.194.52.0/22 -j REJECT --reject-with
+    // tcp-reset
     // http://korben.info/free-et-youtube-comment-regler-le-souci-sous-windows-mac-et-linux.html
-    // Working iptables -A OUTPUT -p tcp -d 173.194.52.0/22 -j REJECT 
-    public static boolean applyIptablesRules(Context context, boolean showErrors) {
+    // Working iptables -A OUTPUT -p tcp -d 173.194.52.0/22 -j REJECT
+    public static boolean applyIptablesRules(Context context, boolean showErrors,   String[] ipToBlocks) {
+        if (ipToBlocks==null || ipToBlocks.length <1) {
+            Log.w(TAG, "applyIptablesRules not executed for empty Ip List");
+            return false;
+        }
         Log.d(TAG, "*** ********************************************* ***");
         Log.d(TAG, "*** Run Script : BEGIN                            ***");
         Log.d(TAG, "*** ********************************************* ***");
@@ -121,26 +127,21 @@ public class ServiceHelper {
                 + "$IPTABLES --version || exit 1\n" //
                 + "# Create the freeYouTube_DTC chains if necessary\n" //
                 + "$IPTABLES -L freeYouTube_DTC >/dev/null 2>/dev/null || $IPTABLES -N freeYouTube_DTC || exit 3\n" //
-//                + "$IPTABLES -A freeYouTube_DTC -j DROP || exit 4\n" //
-                + "$IPTABLES -A freeYouTube_DTC -j REJECT || exit 4\n" // --reject-with tcp-reset
-                + "# Add freeYouTube chain to OUTPUT chain if necessary\n" //
-                // +
-                // "$IPTABLES -L OUTPUT | $GREP -q freeYouTube || $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube --reject-with tcp-reset || exit 11\n"
-                // //
-                // +
-                // "$IPTABLES -A OUTPUT -d 173.194.52.0/22 -j freeYouTube || exit 11\n"
-                // //
-//                + "$IPTABLES -A OUTPUT -p tcp -d 173.194.34.0/22 -j REJECT || exit 15\n" //
-//                + "$IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j REJECT || exit 15\n" //
-               // V new Chain
-                + "$IPTABLES -A OUTPUT -d 173.194.52.0/22 -j freeYouTube_DTC || exit 11\n" //
-//                + "$IPTABLES -A OUTPUT -d 173.194.34.0/22 -j freeYouTube_DTC || exit 11\n" //
-//                + "$IPTABLES -L OUTPUT | $GREP -q freeYouTube_DTC ||  $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube_DTC || exit 11\n" //
-//                 + "$IPTABLES -A freeYouTube -j REJECT || exit 15\n" //
-//                 + "# Flush existing rules\n" //
-//                + "$IPTABLES -F freeYouTube_DTC || exit 17\n" //
-                + "" //
+                // + "$IPTABLES -A freeYouTube_DTC -j DROP || exit 4\n" //
+                + "$IPTABLES -A freeYouTube_DTC -j REJECT || exit 4\n" // --reject-with
+                                                                       // tcp-reset
         );
+        script.append("# Add freeYouTube chain to OUTPUT chain if necessary\n"); //
+        for (String ipToBlock : ipToBlocks) {
+            // ipToBlock like 173.194.52.0/22
+            script.append("$IPTABLES -A OUTPUT -d " + ipToBlock + " -j freeYouTube_DTC || exit 11\n"); //
+        } 
+        // "$IPTABLES -L OUTPUT | $GREP -q freeYouTube_DTC ||  $IPTABLES -A OUTPUT -p tcp -d 173.194.52.0/22 -j freeYouTube_DTC || exit 11\n"
+        // //
+        // + "$IPTABLES -A freeYouTube -j REJECT || exit 15\n" //
+        // + "# Flush existing rules\n" //
+        // + "$IPTABLES -F freeYouTube_DTC || exit 17\n" //
+        script.append("");
 
         // Run Script
         final StringBuilder res = new StringBuilder();
